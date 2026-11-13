@@ -1,0 +1,36 @@
+KOVALENKO — DEMO WEB CON CHATBOT N8N
+
+ARCHIVOS
+index.html, styles.css y chat.js forman la página. No requiere instalación ni compilación. No incluye catálogo ni pasarela de pago.
+
+PROBAR
+Descomprime el ZIP y abre index.html. Necesitas internet para hablar con n8n. Si el navegador bloquea la petición por abrir un archivo local, prueba mediante un servidor local (python3 -m http.server 8080 desde la carpeta) o sube los archivos a Cloudflare Pages.
+
+SUBIR A CLOUDFLARE PAGES
+1. En el panel de Cloudflare, abre Workers & Pages y crea un proyecto Pages con carga directa de archivos (Upload assets / Direct Upload).
+2. Selecciona el ZIP o arrastra la carpeta descomprimida, según las opciones del panel. index.html debe quedar en la raíz del despliegue.
+3. Publica y comparte la dirección HTTPS que termina en pages.dev.
+No hace falta comando de build, Node ni servidor backend para esta página.
+
+CONFIGURAR N8N
+El webhook proporcionado ya está configurado en chat.js.
+- El workflow debe estar activo/publicado y usar su URL de producción.
+- Chat Trigger: modo Embedded Chat. En Allowed Origins (CORS), permite el dominio HTTPS de tu página. Para una prueba temporal puedes usar *.
+- Response Mode: When Last Node Finishes, sin streaming. La salida del agente debe contener output o text.
+- La página envía action=sendMessage, chatInput y sessionId.
+- Para que el agente recuerde los mensajes, conecta una memoria al agente con sessionId como clave de sesión. Mantener el historial visual no sustituye la memoria de n8n.
+- Si activas Load Previous Session en el Chat Trigger, conecta el trigger y el agente al mismo nodo de memoria.
+- Los mensajes de prueba consumen ejecuciones de n8n y, si corresponde, tokens del proveedor de IA.
+
+HISTORIAL
+El historial y el identificador de sesión se conservan en sessionStorage dentro de la misma pestaña. El botón ↻ comienza otra sesión. No se implementa sincronización entre dispositivos ni recuperación de conversaciones desde n8n.
+
+PERSONALIZAR
+Textos y marca: index.html. Colores y responsive: styles.css. Webhook: WEBHOOK_URL en chat.js.
+El asistente responde con el idioma y las instrucciones que tenga configurados en n8n; el sitio no modifica su prompt.
+
+DOCUMENTACIÓN
+https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-langchain.chattrigger/
+
+VERIFICACIÓN
+Sintaxis JavaScript comprobada. No se ha realizado prueba visual en un navegador. La comprobación de conexión se informa en la entrega.
